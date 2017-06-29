@@ -124,22 +124,24 @@ int main()
 						perror("SEND: ");
 				}
 				int r[2];
+				int band = 0;
 				sleep(6);
 				//aquí recorrer el areglo de cartas desordenadas y mandarselas a los jugadores
-				for(j=0;j < 54;j++){
+				for(j=0;j < 54 && band == 0;j++){
 					cartaActual = cartasDesordenadas[j];
 					//se le envía a todos los clientes la carta que se está jugando en este momento
 					for(k=0;k<NUMPLAYERS;k++){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len){ // responde al cliente 
 							perror("SEND: ");
 						}
-						if( (len=recv(s,&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
+						if( (len=recv(ss[jugadores[k].id_Jugador],&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
 							//printf("Aún no hay ganador\n");
 							continue;
 						}else{
 							//printf("Ya hay un ganador");
 							if(r[0]<0){//ya hay un ganador, avisar a los demas
 								printf("Ya hay un ganador %d \n",r[0]);
+								band =1;
 								break;
 							}
 						}
@@ -147,7 +149,7 @@ int main()
 					//printf("Enviado Carta No: %d\n",cartaActual);
 					sleep(2);
 				}
-				if(j==54){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes
+				if(band == 0){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes
 					printf("fin del juego, no hay ganador");
 					cartaActual=54;
 					for(k=0;k<NUMPLAYERS;k++){

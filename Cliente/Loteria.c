@@ -101,6 +101,7 @@ void principal ()
 	port = gtk_entry_get_text (GTK_ENTRY (Puerto));
 	sprintf(cliente.nombreJugador,"%s", gtk_entry_get_text(GTK_ENTRY (Nombre)));
 	if(connectToServer(host,port) == 0){
+		fin_juego = 0;
 		gtk_widget_destroy(window);
 		g_idle_add (esperarJuego,NULL);
 		window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);

@@ -61,6 +61,7 @@ struct hostent *hent; /* estructura que guarda el llamado a gethostbyname */
 int s, len;
 char msj[30];
 int cartaActual;
+int fin_juego;
 int tablero_jugado[4][4];
 char imagen_error[100];
 

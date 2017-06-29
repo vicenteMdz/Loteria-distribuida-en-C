@@ -150,17 +150,19 @@ gboolean esperarJuego(gpointer data){
 }
 
 void ganador(){
-	if(verificaJuego() == 0 ){//El jugador ah ganado, y se emite el aviso al servidor
-		int r[2];
-		r[0] = -1;
-		r[1] = cliente.id_Jugador;
-		if(send(s,&r,sizeof(r),0) < sizeof(r)){
-			perror("SEND: ");
+	if(fin_juego == 0){
+		if(verificaJuego() == 0 ){//El jugador ah ganado, y se emite el aviso al servidor
+			int r[2];
+			r[0] = -1;
+			r[1] = cliente.id_Jugador;
+			if(send(s,&r,sizeof(r),0) < sizeof(r)){
+				perror("SEND: ");
+			}
+			printf("Se avisó exitosamente que el juego a terminado %d\n", r[0]);
+		}else{//el jugador aún no ah ganado, se emite un msj de error
+			sprintf(imagen_error,"images/msj/error_finalizar.jpg");
+			Error(imagen_error);
 		}
-		printf("Se avisó exitosamente que el juego a terminado %d\n", r[0]);
-	}else{//el jugador aún no ah ganado, se emite un msj de error
-		sprintf(imagen_error,"images/msj/error_finalizar.jpg");
-		Error(imagen_error);
 	}
 }
 
@@ -187,8 +189,10 @@ gboolean loteria(gpointer data){
 				Error(imagen_error);
 				break;
 			}else if(cartaActual<0){//el juego termino, hay un ganador
+					fin_juego = 1;
 					sprintf(imagen_error,"images/msj/gano.jpg");
-					Error(imagen_error);		
+					Error(imagen_error);
+					break;		
 				}else{				
 					gtk_widget_destroy(carta);
 					sprintf(cartaImg,"images/fichas/%d.png",cartaActual);
