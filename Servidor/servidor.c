@@ -157,7 +157,8 @@ gboolean esperarJugadores(gpointer data){
 		//Hasta este punto ya se tiene guardado los datos de cada jugador que se conectó		
 		numClientes++;
 		printf("No Clientes : %d\n",numClientes);
-		if(numClientes == NUMPLAYERS){/********* Aqui Iniciar la Partida ***********/
+		//if(numClientes == NUMPLAYERS){/********* Aqui Iniciar la Partida ***********/
+		if((numClientes%NUMPLAYERS)==0){/********* Aqui Iniciar la Partida ***********/
 			strcpy(msj,"init");	
 			printf("%s",msj);
 			for(i=0;i<NUMPLAYERS;i++)
@@ -294,7 +295,7 @@ void playing(){
 					//se le envía a todos los clientes la carta que se está jugando en este momento
 					for(k=0;k<NUMPLAYERS && band == 0;k++){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len){ // responde al cliente 
-							perror("SEND: ");
+							//perror("SEND: ");
 						}
 						if( (len=recv(ss[jugadores[k].id_Jugador],&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
 							//printf("Aún no hay ganador\n");
