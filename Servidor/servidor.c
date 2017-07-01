@@ -297,7 +297,13 @@ void playing(){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len){ // responde al cliente 
 							//perror("SEND: ");
 						}
-						if( (len=recv(ss[jugadores[k].id_Jugador],&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
+						
+						if((len=recv(ss[jugadores[k].id_Jugador],&jugadores[k],sizeof(jugadores[numClientes]),MSG_DONTWAIT))<=0){
+							   continue;
+							   //exit(1);
+						}
+						//printInfoPlayer(jugadores[k]);
+						/*if( (len=recv(ss[jugadores[k].id_Jugador],&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
 							//printf("Aún no hay ganador\n");
 							continue;
 						}else{
@@ -306,10 +312,18 @@ void playing(){
 								printf("Ya hay un ganador %d \n",r[0]);
 								band = 1;
 							}
-						}
+						}*/
 					}
 					//printf("Enviado Carta No: %d\n",cartaActual);
 					sleep(2);
+					//el servidor recoge los datos del juego de los jugadores
+					/*for(m = 0;m<NUMPLAYERS;m++){
+						//el servidor recibe los datos del jugador recien conectado
+						if((len=recv(ss[jugadores[m].id_Jugador],&jugadores[jugadores[m].id_Jugador],sizeof(jugadores[numClientes]),0))<=0){
+							   perror("RECV: ");
+							   //exit(1);
+						}
+					}*/
 				}
 				printf("Valor de la bandera --> %d\n",band);
 				if(band == 0){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes
@@ -550,9 +564,11 @@ void copiarMatriz(int mat1[4][4],int mat2[4][4]){
 void printInfoPlayer(jugador j){
 	printf("\n****** INFO PLAYER *********\nID Jugador --> %d\n",j.id_Jugador);
 	printf("Nombre Jugador --> %s\n",j.nombreJugador);
-	printf("No de Planilla --> %d\n",j.id_tablero);
-	printf("Planilla de jugador\n");
-	imprimirPlanilla(j.tablero);
+	//printf("No de Planilla --> %d\n",j.id_tablero);
+	//printf("Planilla de jugador\n");
+	//imprimirPlanilla(j.tablero);
+	printf("Tablero jugado\n");
+	imprimirPlanilla(j.tablero_jugado);
 }
 
 

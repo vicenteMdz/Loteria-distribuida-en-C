@@ -25,6 +25,7 @@ typedef struct
 	char nombreJugador[50];
 	int tablero[4][4];
 	int id_tablero;
+	int tablero_jugado[4][4];
 } jugador;
 
 extern int errno;
@@ -46,7 +47,7 @@ int planillas[10];
 int aux2[10] = {1,1,1,1,1,1,1,1,1,1};//se usa para verificar que planillas ya fueron asignadas
 int numClientes = 0;
 int numPartidas = 0;
-int i,j,k;
+int i,j,k,m;
 int cartaActual;
 struct sockaddr_in lsock,fsock;
 int s, ss[NUMPLAYERS];
