@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
-#include <sys/types.h>
+//#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#define PUERTO 4444
 #define MAX_LINE 120
 #define NUMPLAYERS 2
+#define _GNU_SOURCE  
 
 typedef struct
 {
@@ -44,6 +44,7 @@ int planilla10[4][4] = {{39,40,19,20},{48,49,28,29},{3,4,37,38},{12,13,46,47}};
 int planillas[10];
 int aux2[10] = {1,1,1,1,1,1,1,1,1,1};//se usa para verificar que planillas ya fueron asignadas
 int numClientes = 0;
+int numPartidas = 0;
 int i,j,k;
 int cartaActual;
 struct sockaddr_in lsock,fsock;
@@ -53,11 +54,13 @@ jugador jugadores[NUMPLAYERS];
 char msj[30];
 
 ///********************** Interfaz del servidor
-GtkWidget *window, *cont, *fondo, *puerto, *inicio;
+GtkWidget *window, *cont, *fondo, *puerto, *inicio, *labelNombre;
 GtkWidget *window1, *cont1, *fondo1, *puerto1, *inicio1;
 
 void ConexionSer();
 void VistaSever();
+gboolean esperarJugadores(gpointer data);
+void muestraPartida();
 
 void llenarCartas();
 void imprimirCartas(int array[]);
@@ -66,5 +69,5 @@ void imprimirPlanilla(int array[4][4]);
 void obtenerPlanilla(int array[][4], int *id);
 void copiarMatriz(int mat1[4][4],int mat2[4][4]);
 void printInfoPlayer(jugador j);
-int abrirServidor();
+int abrirServidor(const gchar *port);
 void esperaClientes();
