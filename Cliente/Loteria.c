@@ -105,7 +105,9 @@ void principal ()
 		gtk_widget_destroy(window);
 		g_idle_add (esperarJuego,NULL);
 		window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_title (GTK_WINDOW (window1), "Partida");
+		char tittle[80];
+		sprintf(tittle,"Partida %s",cliente.nombreJugador);
+		gtk_window_set_title (GTK_WINDOW (window1), tittle);
 		gtk_widget_set_size_request(window1,1300,680);//tamaño de la ventana creada
 		gtk_window_set_resizable(GTK_WINDOW(window1),FALSE);// esta linea deja estatica la ventana
 		gtk_window_set_position(GTK_WINDOW(window1), GTK_WIN_POS_CENTER);
@@ -205,6 +207,28 @@ void Error (char const *imagen)
 	gtk_fixed_put(GTK_FIXED(cont5),fondo,0,0);//se coloca un objeto en la ventana
 	
 	g_signal_connect_swapped (G_OBJECT (Aceptar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window4);
+	gtk_container_add (GTK_CONTAINER(window4),cont5);// cerramos el contenedor
+	gtk_widget_show_all(window4);// terminamo de usar la ventana
+}
+
+void FinJuego(char const *imagen)
+{	
+	window4 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (window4), "Error");
+	gtk_widget_set_size_request(window4,550,215);//tamaño de la ventana creada
+	gtk_window_set_resizable(GTK_WINDOW(window4),FALSE);// esta linea deja estatica la ventana
+	gtk_window_set_position(GTK_WINDOW(window4), GTK_WIN_POS_CENTER);
+	cont5 = gtk_fixed_new();// creamos un contenedor
+	fondo=gtk_image_new_from_file(imagen);//se llama la imagen de fondo
+	Aceptar = gtk_button_new_with_label("Aceptar");
+	gtk_widget_set_size_request(Aceptar,98,33);
+	gtk_fixed_put (GTK_FIXED(cont5),Aceptar,385,148);	
+	gtk_fixed_put(GTK_FIXED(cont5),fondo,0,0);//se coloca un objeto en la ventana	
+	//if(fin_juego == 1){
+	g_signal_connect(G_OBJECT(Aceptar), "clicked",G_CALLBACK(nuevaPartida), (gpointer) window4); 
+	//}else{
+		g_signal_connect_swapped (G_OBJECT (Aceptar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window4);
+	//}
 	gtk_container_add (GTK_CONTAINER(window4),cont5);// cerramos el contenedor
 	gtk_widget_show_all(window4);// terminamo de usar la ventana
 }

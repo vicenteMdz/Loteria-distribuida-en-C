@@ -48,7 +48,7 @@ GtkWidget *carta, *label_espera;
 GtkWidget *cont1, *cont2, *cont3, *cont4, *cont5, *cont6;
 GtkWidget *Dir, *Puerto, *Nombre;
 GtkWidget *loading,*waiting, *mensaje_espera ;
-GtkWidget *Inicio, *Jugar, *AcercaD, *Manual, *Salir, *Regresar, *Aceptar;
+GtkWidget *Inicio, *Jugar, *AcercaD, *Manual, *Salir, *Regresar, *Aceptar, *imgLoteriaButton;
 GtkWidget *F1, *F2, *F3, *F4, *F5, *F6, *F7, *F8, *F9, *F10, *F11, *F12, *F13, *F14, *F15, *F16, *Loteria, *Inicia;
 GtkWidget *planilla[4][4];
 
@@ -66,15 +66,13 @@ int tablero_jugado[4][4];
 char imagen_error[100];
 
 
-
-
-
 void Conexion();
 void principal();
 void Menu();
 void AcercaDe();
 void ManualU ();
 void Error(char const *imagen);
+void FinJuego(char const *imagen);
 
 void imprimirPlanilla(int array[4][4]);
 void printInfoPlayer(jugador j);
@@ -87,5 +85,5 @@ void fila3(int col);
 void fila4(int col);
 int verificaJuego();
 void ganador();
-
+void nuevaPartida(GtkWidget *widget, gpointer window);
 

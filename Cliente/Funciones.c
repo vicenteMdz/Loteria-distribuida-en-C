@@ -86,6 +86,11 @@ gboolean esperarJuego(gpointer data){
 					gtk_widget_destroy(fondo1);
 					fondo1=gtk_image_new_from_file("images/fondo3.jpg");//se llama la imagen de fondo
 					gtk_fixed_put(GTK_FIXED(cont2),fondo1,0,0);//se coloca un objeto en la ventana
+					GtkWidget *label = gtk_label_new(NULL);
+					char nombre[255];
+					sprintf(nombre,"<b><span foreground=\"black\" size=\"xx-large\">%s</span></b>",cliente.nombreJugador);
+					gtk_label_set_markup(GTK_LABEL(label),nombre);
+					gtk_fixed_put(GTK_FIXED(cont2),label,915,100);
 					
 					int i, y = 30;
 					for(i=0;i<4;i++){
@@ -119,17 +124,20 @@ gboolean esperarJuego(gpointer data){
 					g_signal_connect_swapped (G_OBJECT (planilla[3][1]), "clicked",G_CALLBACK (fila4),(gpointer) 1);
 					g_signal_connect_swapped (G_OBJECT (planilla[3][2]), "clicked",G_CALLBACK (fila4),(gpointer) 2);
 					g_signal_connect_swapped (G_OBJECT (planilla[3][3]), "clicked",G_CALLBACK (fila4),(gpointer) 3);
-					Loteria = gtk_button_new_with_label("Loteria");	
+					Loteria = gtk_button_new_with_label("Loteria");							
+					gtk_widget_set_size_request(Loteria,180,77);
+					gtk_fixed_put (GTK_FIXED(cont2),Loteria,870,575);
 					//Inicia = gtk_button_new_with_label("Iniciar partida");	
-					gtk_widget_set_size_request(Loteria,120,70);	
 					//gtk_widget_set_size_request(Inicia,120,70);
 					//gtk_fixed_put (GTK_FIXED(cont2),Inicia,750,510);
-					gtk_fixed_put (GTK_FIXED(cont2),Loteria,850,570);
+					
 					char img[50];
 					sprintf(img,"images/%d.jpg",cliente.id_tablero+1);
 					fondo=gtk_image_new_from_file(img);//se llama la imagen de fondo
 					gtk_fixed_put(GTK_FIXED(cont2),fondo,38,23);//se coloca un objeto en la ventana
-					
+					imgLoteriaButton = gtk_image_new_from_file("images/loteria.png");//se llama la imagen de fondo
+					gtk_fixed_put(GTK_FIXED(cont2),imgLoteriaButton,865,570);//se coloca un objeto en la ventana
+										
 					waiting=gtk_image_new_from_file("images/54321.gif");//se llama la imagen de fondo
 					gtk_fixed_put(GTK_FIXED(cont2),waiting,500,250);//se coloca un objeto en la ventana
 					mensaje_espera=gtk_image_new_from_file("images/letras.png");//se llama la imagen de fondo
@@ -166,6 +174,26 @@ void ganador(){
 	}
 }
 
+void nuevaPartida(GtkWidget *widget, gpointer windowParent) {
+    
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(GTK_WINDOW(windowParent),
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_QUESTION,
+			GTK_BUTTONS_YES_NO,
+			"¿Quieres realizar una nueva partida?");
+	gtk_window_set_title(GTK_WINDOW(dialog), "Pregunta");
+	gint result=gtk_dialog_run(GTK_DIALOG(dialog));
+	if(result == -8){//Si el usuario aceptó el mensaje. Se inicia una nueva partida
+		gtk_widget_destroy(window1);
+		Conexion();
+		//gtk_widget_destroy(window4);
+	}else{//cerramos toda la aplicación
+		exit(1);
+	}
+	gtk_widget_destroy(dialog);
+}
+
 gboolean loteria(gpointer data){
 	while(gtk_events_pending()) gtk_main_iteration();
 	carta=gtk_image_new_from_file("images/fichas/1.png");//se llama la imagen de fondo
@@ -186,12 +214,13 @@ gboolean loteria(gpointer data){
 			}
 			if(cartaActual>54){//el juego ah terminado y nadie ah ganado
 				sprintf(imagen_error,"images/msj/sin_ganador.jpg");
-				Error(imagen_error);
+				FinJuego(imagen_error);
 				break;
 			}else if(cartaActual<0){//el juego termino, hay un ganador
 					fin_juego = 1;
+					fprintf(stderr,"La Partida a finalizado, hay un ganador");
 					sprintf(imagen_error,"images/msj/gano.jpg");
-					Error(imagen_error);
+					FinJuego(imagen_error);
 					break;		
 				}else{				
 					gtk_widget_destroy(carta);

@@ -130,7 +130,7 @@ int main()
 				for(j=0;j < 54 && band == 0;j++){
 					cartaActual = cartasDesordenadas[j];
 					//se le envía a todos los clientes la carta que se está jugando en este momento
-					for(k=0;k<NUMPLAYERS;k++){
+					for(k=0;k<NUMPLAYERS && band == 0;k++){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len){ // responde al cliente 
 							perror("SEND: ");
 						}
@@ -141,24 +141,24 @@ int main()
 							//printf("Ya hay un ganador");
 							if(r[0]<0){//ya hay un ganador, avisar a los demas
 								printf("Ya hay un ganador %d \n",r[0]);
-								band =1;
-								break;
+								band = 1;
 							}
 						}
 					}
 					//printf("Enviado Carta No: %d\n",cartaActual);
 					sleep(2);
 				}
+				printf("Valor de la bandera --> %d\n",band);
 				if(band == 0){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes
-					printf("fin del juego, no hay ganador");
-					cartaActual=54;
+					printf("fin del juego, no hay ganador\n");
+					cartaActual=55;
 					for(k=0;k<NUMPLAYERS;k++){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
 							perror("SEND: ");
 					}
 				}else{
 					cartaActual = r[0];
-					printf("Mensaje el juego a terminado %d", cartaActual);
+					printf("Mensaje el juego a terminado %d\n", cartaActual);
 					for(k=0;k<NUMPLAYERS;k++){
 						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
 							perror("SEND: ");
@@ -168,6 +168,7 @@ int main()
 			} /* if fork */
 			else /* Aqui continua el proceso vigia para aceptar otra conexion */
 			{
+				numClientes = 0;//se reinicia el contador para una nueva partida
 				for(int k=0;k<NUMPLAYERS;k++)
 					close(ss[k]); /* el padre cierra el socket completo que dejo al hijo */
 			}	
