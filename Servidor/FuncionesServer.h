@@ -51,16 +51,17 @@ struct sockaddr_in lsock,fsock;
 int s, ss[NUMPLAYERS];
 int len;
 jugador jugadores[NUMPLAYERS];	
-char msj[30];
+char msj[30],nombreImagen[10];
 
 ///********************** Interfaz del servidor
-GtkWidget *window, *cont, *fondo, *puerto, *inicio, *labelNombre;
+GtkWidget *window, *cont, *fondo, *puerto, *inicio, *labelNombre,*planillaJugadorImg;
 GtkWidget *window1, *cont1, *fondo1, *puerto1, *inicio1;
 
 void ConexionSer();
 void VistaSever();
 gboolean esperarJugadores(gpointer data);
 void muestraPartida();
+void muestraPlanilla(int idJugador, int idPlanilla);
 
 void llenarCartas();
 void imprimirCartas(int array[]);

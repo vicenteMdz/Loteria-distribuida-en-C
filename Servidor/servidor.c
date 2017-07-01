@@ -72,21 +72,7 @@ void muestraPartida(){
 	fondo=gtk_image_new_from_file("Images/fondo.jpg");//se llama la imagen de fondo	
 	gtk_fixed_put(GTK_FIXED(cont1),fondo,0,0);//se coloca un objeto en la ventana
 	
-	/*fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
-	gtk_fixed_put(GTK_FIXED(cont1),fondo,100,100);//se coloca un objeto en la ventana
-	
-	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
-	gtk_fixed_put(GTK_FIXED(cont1),fondo,380,100);//se coloca un objeto en la ventana
-	
-	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
-	gtk_fixed_put(GTK_FIXED(cont1),fondo,660,100);//se coloca un objeto en la ventana
-	
-	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
-	gtk_fixed_put(GTK_FIXED(cont1),fondo,230,430);//se coloca un objeto en la ventana
-	
-	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
-	gtk_fixed_put(GTK_FIXED(cont1),fondo,510,430);//se coloca un objeto en la ventana
-	
+	/*
 	GtkWidget *label = gtk_label_new(NULL);
 	//char nombre[255];
 	//sprintf(nombre,"<b><span foreground=\"black\" size=\"xx-large\">%s</span></b>",cliente.nombreJugador);
@@ -157,15 +143,17 @@ gboolean esperarJugadores(gpointer data){
                exit(1);
         }
         //mostramos el nombre del jugador conectado en la interfaz de servidor
-        char nombre[255];
+       char nombre[255];
 		sprintf(nombre,"<b><span foreground=\"black\" size=\"xx-large\">%s</span></b>",jugadores[numClientes].nombreJugador);
 		labelNombre = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(labelNombre),nombre);
 		if(numClientes<4){
 			gtk_fixed_put(GTK_FIXED(cont1),labelNombre,100+(numClientes*280),70);
-		}else{
-			gtk_fixed_put(GTK_FIXED(cont1),labelNombre,100+(numClientes*280),400);
-		}
+		}else if(numClientes == NUMPLAYERS){
+				gtk_fixed_put(GTK_FIXED(cont1),labelNombre,510,400);
+			}else{
+				gtk_fixed_put(GTK_FIXED(cont1),labelNombre,230,400);
+			}
 		//Hasta este punto ya se tiene guardado los datos de cada jugador que se conectó		
 		numClientes++;
 		printf("No Clientes : %d\n",numClientes);
@@ -182,16 +170,33 @@ gboolean esperarJugadores(gpointer data){
 				/* Aqui se ejecuta el proceso hijo */
 				llenarCartas();
 				imprimirCartas(cartas);
-				//barajearCartas();
-				//imprimirCartas(cartasDesordenadas);
+				barajearCartas();
+				imprimirCartas(cartasDesordenadas);
 				//Recorrer el arreglo de sokets clientes y mandarle la 
 				//planilla que le asignó el servidor				
 				for(j = 0; j < NUMPLAYERS;j++){
 					obtenerPlanilla(jugadores[j].tablero, &jugadores[j].id_tablero);
 					//printInfoPlayer(jugadores[j]);
-					if(send(ss[jugadores[j].id_Jugador],&jugadores[j],sizeof(jugadores[j]),0) < len) /* responde al cliente */
+					if(send(ss[jugadores[j].id_Jugador],&jugadores[j],sizeof(jugadores[j]),0) < len){ /* responde al cliente */
 						perror("SEND: ");
+					}
+					//mostrar la planilla de cada jugador en la interfaz del servidor
+					//muestraPlanilla(jugadores[j].id_Jugador,jugadores[j].id_tablero);
+					//sprintf(nombreImagen,"Images/%d.png",jugadores[j].id_tablero+1);
+					//fprintf(stderr,"%s\n",nombreImagen);
+					/*planillaJugadorImg = gtk_image_new_from_file(nombreImagen);//se llama la imagen de fondo
+					if(jugadores[j].id_Jugador<3){	
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,100+(280*jugadores[j].id_Jugador),100);//se coloca un objeto en la ventana
+					}else if(jugadores[j].id_Jugador == 4){
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,510,430);//se coloca un objeto en la ventana
+					}else{
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,230,430);//se coloca un objeto en la ventana
+					}*/
+					
+					
+					//while(gtk_events_pending()) gtk_main_iteration();
 				}
+				//gtk_widget_show_all(window1);// terminamo de usar la ventana
 				int r[2];
 				int band = 0;
 				sleep(6);
@@ -245,6 +250,33 @@ gboolean esperarJugadores(gpointer data){
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}
 	return FALSE;
+}
+
+void muestraPlanilla(int idJugador, int idPlanilla){
+	sprintf(nombreImagen,"Images/%d.png",idPlanilla);
+	fprintf(stderr,"%s",nombreImagen);
+	planillaJugadorImg = gtk_image_new_from_file(nombreImagen);//se llama la imagen de fondo
+	if(idJugador<3){	
+		gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,100+(280*idJugador),100);//se coloca un objeto en la ventana
+	}else if(idJugador == 4){
+		gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,510,430);//se coloca un objeto en la ventana
+	}else{
+		gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,230,430);//se coloca un objeto en la ventana
+	}
+	
+	gtk_widget_show_all(window1);// terminamo de usar la ventana
+	/*fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
+	gtk_fixed_put(GTK_FIXED(cont1),fondo,380,100);//se coloca un objeto en la ventana
+	
+	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
+	gtk_fixed_put(GTK_FIXED(cont1),fondo,660,100);//se coloca un objeto en la ventana
+	
+	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
+	gtk_fixed_put(GTK_FIXED(cont1),fondo,230,430);//se coloca un objeto en la ventana
+	
+	fondo=gtk_image_new_from_file("Images/1.png");//se llama la imagen de fondo	
+	gtk_fixed_put(GTK_FIXED(cont1),fondo,510,430);//se coloca un objeto en la ventana*/
+	
 }
 
 void esperaClientes(){
@@ -346,7 +378,7 @@ void esperaClientes(){
 void llenarCartas(){
 	for(int i = 0; i<54 ; i++){
 		cartas[i] = i+1;
-		cartasDesordenadas[i] = i+1;
+		//cartasDesordenadas[i] = i+1;
 		aux[i] = 1;
 	}
 }
@@ -386,9 +418,9 @@ void barajearCartas(){
 void obtenerPlanilla(int array[][4], int * id){
 	int index=0;
 	srand(time(NULL));
-	for (int i=0; i < 2; i++){
+	for (int i=0; i < 10; i++){
 		do{
-			index = (rand() % 2);
+			index = (rand() % 10);
 		}
 		while (aux2[index] == 0);
 		aux2[index]=0;
