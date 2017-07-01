@@ -32,6 +32,7 @@ typedef struct//guarda la información del jugador
 	char nombreJugador[50];
 	int tablero[4][4];
 	int id_tablero;
+	int tablero_jugado[4][4];
 } jugador;
 
 typedef struct {

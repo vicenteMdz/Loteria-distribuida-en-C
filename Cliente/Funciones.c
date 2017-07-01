@@ -229,6 +229,10 @@ gboolean loteria(gpointer data){
 					gtk_fixed_put(GTK_FIXED(cont2),carta,850,180);//se coloca un objeto en la ventana
 					gtk_widget_show_all(window1);// terminamo de usar la ventana
 				}
+			//aquí enviar el estado del cliente
+			if( send(s,&cliente,sizeof(cliente),0) < sizeof(cliente) ){
+				perror("SEND: ");
+			}
 		}
 	}
 	return FALSE;
@@ -238,7 +242,7 @@ void fila1(int col){
 	if(cartaActual == cliente.tablero[0][col]){
 		GtkWidget *m=gtk_image_new_from_file("images/maiz.r.png");
 		gtk_fixed_put (GTK_FIXED(cont2),m,63+(col*140),50);		
-		tablero_jugado[0][col] = 1;
+		cliente.tablero_jugado[0][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
 			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
@@ -253,7 +257,7 @@ void fila2(int col){
 	if(cartaActual == cliente.tablero[1][col]){
 		GtkWidget *m=gtk_image_new_from_file("images/maiz.r.png");
 		gtk_fixed_put (GTK_FIXED(cont2),m,63+(col*140),210);
-		tablero_jugado[1][col] = 1;
+		cliente.tablero_jugado[1][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
 			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
@@ -268,7 +272,7 @@ void fila3(int col){
 	if(cartaActual == cliente.tablero[2][col]){
 		GtkWidget *m=gtk_image_new_from_file("images/maiz.r.png");
 		gtk_fixed_put (GTK_FIXED(cont2),m,63+(col*140),370);
-		tablero_jugado[2][col] = 1;
+		cliente.tablero_jugado[2][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
 			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
@@ -283,7 +287,7 @@ void fila4(int col){
 	if(cartaActual == cliente.tablero[3][col]){
 		GtkWidget *m=gtk_image_new_from_file("images/maiz.r.png");
 		gtk_fixed_put (GTK_FIXED(cont2),m,63+(col*140),530);
-		tablero_jugado[3][col] = 1;
+		cliente.tablero_jugado[3][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
 			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
@@ -299,7 +303,7 @@ int verificaJuego(){
 	int i,j,sum=0;
 	for(i=0;i<4;i++){
 		for(j=0;j<4;j++){
-			if(tablero_jugado[i][j]==1){
+			if(cliente.tablero_jugado[i][j]==1){
 				sum++;
 			}
 		}
