@@ -8,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <pthread.h>
 #define MAX_LINE 120
 #define NUMPLAYERS 2
 #define _GNU_SOURCE  
@@ -72,3 +73,4 @@ void copiarMatriz(int mat1[4][4],int mat2[4][4]);
 void printInfoPlayer(jugador j);
 int abrirServidor(const gchar *port);
 void esperaClientes();
+void playing();

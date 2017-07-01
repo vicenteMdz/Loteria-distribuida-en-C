@@ -165,9 +165,11 @@ gboolean esperarJugadores(gpointer data){
 				if(send(ss[i],msj,strlen(msj),0) < len) /* responde al cliente */
 					perror("SEND: ");
 			}	
-			numClientes = 0;//se reinicia el contador para una nueva partida
-			if (fork() == 0) {
-				/* Aqui se ejecuta el proceso hijo */
+			 pthread_t thd1;
+			pthread_create (&thd1, NULL, (void*)playing,NULL);
+			
+			//numClientes = 0;//se reinicia el contador para una nueva partida
+			/*if (fork() == 0) {
 				llenarCartas();
 				imprimirCartas(cartas);
 				barajearCartas();
@@ -177,21 +179,21 @@ gboolean esperarJugadores(gpointer data){
 				for(j = 0; j < NUMPLAYERS;j++){
 					obtenerPlanilla(jugadores[j].tablero, &jugadores[j].id_tablero);
 					//printInfoPlayer(jugadores[j]);
-					if(send(ss[jugadores[j].id_Jugador],&jugadores[j],sizeof(jugadores[j]),0) < len){ /* responde al cliente */
+					if(send(ss[jugadores[j].id_Jugador],&jugadores[j],sizeof(jugadores[j]),0) < len){
 						perror("SEND: ");
 					}
 					//mostrar la planilla de cada jugador en la interfaz del servidor
 					//muestraPlanilla(jugadores[j].id_Jugador,jugadores[j].id_tablero);
 					//sprintf(nombreImagen,"Images/%d.png",jugadores[j].id_tablero+1);
 					//fprintf(stderr,"%s\n",nombreImagen);
-					/*planillaJugadorImg = gtk_image_new_from_file(nombreImagen);//se llama la imagen de fondo
+					planillaJugadorImg = gtk_image_new_from_file(nombreImagen);//se llama la imagen de fondo
 					if(jugadores[j].id_Jugador<3){	
 						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,100+(280*jugadores[j].id_Jugador),100);//se coloca un objeto en la ventana
 					}else if(jugadores[j].id_Jugador == 4){
 						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,510,430);//se coloca un objeto en la ventana
 					}else{
 						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,230,430);//se coloca un objeto en la ventana
-					}*/
+					}
 					
 					
 					//while(gtk_events_pending()) gtk_main_iteration();
@@ -239,17 +241,91 @@ gboolean esperarJugadores(gpointer data){
 					}					
 				}
 				
-			} /* if fork */
-			else /* Aqui continua el proceso vigia para aceptar otra conexion */
+			}
+			else
 			{
 				numClientes = 0;//se reinicia el contador para una nueva partida
 				for(int k=0;k<NUMPLAYERS;k++)
-					close(ss[k]); /* el padre cierra el socket completo que dejo al hijo */
-			}	
+					close(ss[k]);
+			}*/	
 		}
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}
 	return FALSE;
+}
+
+void playing(){
+	/* Aqui se ejecuta el proceso hijo */
+				llenarCartas();
+				imprimirCartas(cartas);
+				barajearCartas();
+				imprimirCartas(cartasDesordenadas);
+				//Recorrer el arreglo de sokets clientes y mandarle la 
+				//planilla que le asignó el servidor				
+				for(j = 0; j < NUMPLAYERS;j++){
+					obtenerPlanilla(jugadores[j].tablero, &jugadores[j].id_tablero);
+					//printInfoPlayer(jugadores[j]);
+					if(send(ss[jugadores[j].id_Jugador],&jugadores[j],sizeof(jugadores[j]),0) < len){ /* responde al cliente */
+						perror("SEND: ");
+					}
+					//mostrar la planilla de cada jugador en la interfaz del servidor
+					//muestraPlanilla(jugadores[j].id_Jugador,jugadores[j].id_tablero);
+					sprintf(nombreImagen,"Images/%d.png",jugadores[j].id_tablero+1);
+					//fprintf(stderr,"%s\n",nombreImagen);
+					planillaJugadorImg = gtk_image_new_from_file(nombreImagen);//se llama la imagen de fondo
+					if(jugadores[j].id_Jugador<3){	
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,100+(280*jugadores[j].id_Jugador),100);//se coloca un objeto en la ventana
+					}else if(jugadores[j].id_Jugador == 4){
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,510,430);//se coloca un objeto en la ventana
+					}else{
+						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,230,430);//se coloca un objeto en la ventana
+					}
+					
+					
+					//while(gtk_events_pending()) gtk_main_iteration();
+				}
+				gtk_widget_show_all(window1);// terminamo de usar la ventana
+				int r[2];
+				int band = 0;
+				sleep(6);
+				//aquí recorrer el areglo de cartas desordenadas y mandarselas a los jugadores
+				for(j=0;j < 54 && band == 0;j++){
+					cartaActual = cartasDesordenadas[j];
+					//se le envía a todos los clientes la carta que se está jugando en este momento
+					for(k=0;k<NUMPLAYERS && band == 0;k++){
+						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len){ // responde al cliente 
+							perror("SEND: ");
+						}
+						if( (len=recv(ss[jugadores[k].id_Jugador],&r,sizeof(r),MSG_DONTWAIT))<= 0 ){
+							//printf("Aún no hay ganador\n");
+							continue;
+						}else{
+							//printf("Ya hay un ganador");
+							if(r[0]<0){//ya hay un ganador, avisar a los demas
+								printf("Ya hay un ganador %d \n",r[0]);
+								band = 1;
+							}
+						}
+					}
+					//printf("Enviado Carta No: %d\n",cartaActual);
+					sleep(2);
+				}
+				printf("Valor de la bandera --> %d\n",band);
+				if(band == 0){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes
+					printf("fin del juego, no hay ganador\n");
+					cartaActual=55;
+					for(k=0;k<NUMPLAYERS;k++){
+						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
+							perror("SEND: ");
+					}
+				}else{
+					cartaActual = r[0];
+					printf("Mensaje el juego a terminado %d\n", cartaActual);
+					for(k=0;k<NUMPLAYERS;k++){
+						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
+							perror("SEND: ");
+					}					
+				}
 }
 
 void muestraPlanilla(int idJugador, int idPlanilla){

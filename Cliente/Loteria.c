@@ -146,10 +146,10 @@ void AcercaDe ()
 	gtk_widget_set_size_request(Regresar,120,38);
 	gtk_widget_set_size_request(Salir,120,38);
 	
-	gtk_fixed_put(GTK_FIXED(cont4),fondo,0,0);//se coloca un objeto en la ventana
 
 	gtk_fixed_put (GTK_FIXED(cont4),Regresar,82,400);
 	gtk_fixed_put (GTK_FIXED(cont4),Salir,292,398);
+	gtk_fixed_put(GTK_FIXED(cont4),fondo,0,0);//se coloca un objeto en la ventana
 		
 	g_signal_connect_swapped (G_OBJECT (Regresar), "clicked",G_CALLBACK (Menu),(gpointer) window3);
 	g_signal_connect_swapped (G_OBJECT (Regresar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window3);
@@ -169,24 +169,19 @@ void ManualU ()
 	gtk_window_set_position(GTK_WINDOW(window5), GTK_WIN_POS_CENTER);
 
 	cont6 = gtk_fixed_new();// creamos un contenedor
-	//fondo=gtk_image_new_from_file("principal.png");//se llama la imagen de fondo
+	fondo=gtk_image_new_from_file("images/instrucciones.jpg");//se llama la imagen de fondo
 
 	Regresar = gtk_button_new_with_label("Regresar");
-	Salir = gtk_button_new_with_label("Salir");
 
-	gtk_widget_set_size_request(Regresar,120,70);
-	gtk_widget_set_size_request(Salir,120,70);
+	gtk_widget_set_size_request(Regresar,150,48);
 	
-	gtk_fixed_put (GTK_FIXED(cont6),Regresar,80,480);
-	gtk_fixed_put (GTK_FIXED(cont6),Salir,300,480);
+	gtk_fixed_put (GTK_FIXED(cont6),Regresar,178,520);
+	gtk_fixed_put(GTK_FIXED(cont6),fondo,0,0);//se coloca un objeto en la ventana
 	
-	//gtk_fixed_put(GTK_FIXED(contenedor),fondo,0,0);//se coloca un objeto en la ventana
 	
 	g_signal_connect_swapped (G_OBJECT (Regresar), "clicked",G_CALLBACK (Menu),(gpointer) window5);
 	g_signal_connect_swapped (G_OBJECT (Regresar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window5);
 
-	
-	g_signal_connect_swapped (G_OBJECT (Salir), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window5);
 	gtk_container_add (GTK_CONTAINER(window5),cont6);// cerramos el contenedor
 	gtk_widget_show_all(window5);// terminamo de usar la ventana	
 }
