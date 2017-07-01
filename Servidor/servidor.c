@@ -1,67 +1,60 @@
 // Recibe una cadena del Cliente y se la devuelve en mayusculas
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
-#define PUERTO 4444
-#define MAX_LINE 120
-#define NUMPLAYERS 2
+#include "FuncionesServer.h"
 
-typedef struct
+int main(int argc, char *argv[])
 {
-	int id_cliente;
-	int tablero[4][4];
-} mensaje1;
+	gtk_init (&argc,&argv);
+//	gtk_window_set_icon(GTK_WINDOW(window), create_pixbuf("icon.png"));//coloca el icono del programa
+//	gtk_signal_connect (GTK_OBJECT (window), "destroy",GTK_SIGNAL_FUNC (gtk_main_quit), "WM destroy");
+	ConexionSer();
+	gtk_widget_show (window);
+	gtk_main ();	
+	return 0;
+}
 
-typedef struct
-{
-	int id_Jugador;
-	char nombreJugador[50];
-	int tablero[4][4];
-	int id_tablero;
-} jugador;
+void ConexionSer(){
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (window), "Loteria");
+	gtk_widget_set_size_request(window,350,250);//tamaño de la ventana creada
+	gtk_window_set_resizable(GTK_WINDOW(window),FALSE);// esta linea deja estatica la ventana
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
-extern int errno;
-int cartas[54];
-int cartasDesordenadas[54];
-int aux[54];//se usa como auxiliar al desordenar las cartar
-//se declaran las 10 planillas ya definidas
-int planilla1[4][4] = {{1,2,3,4},{10,11,12,13},{19,20,21,22},{28,29,30,31}};
-int planilla2[4][4] = {{6,7,8,9},{15,16,17,18},{24,25,26,27},{33,34,35,36}};
-int planilla3[4][4] = {{2,3,4,5},{7,8,9,10},{12,13,14,15},{17,18,19,20}};
-int planilla4[4][4] = {{43,44,45,21},{52,53,54,26},{7,8,9,31},{16,17,18,36}};
-int planilla5[4][4] = {{22,23,24,25},{27,28,29,30},{32,33,34,35},{37,38,39,40}};
-int planilla6[4][4] = {{21,22,23,24},{30,31,32,33},{39,40,41,42},{48,49,50,51}};
-int planilla7[4][4] = {{25,26,27,41},{34,35,36,46},{43,44,45,51},{52,53,54,32}};
-int planilla8[4][4] = {{42,43,44,45},{47,48,49,50},{52,53,54,1},{40,10,19,20}};
-int planilla9[4][4] = {{41,42,37,38},{50,51,46,47},{5,6,1,2},{14,15,10,11}};
-int planilla10[4][4] = {{39,40,19,20},{48,49,28,29},{3,4,37,38},{12,13,46,47}};
-int planillas[10];
-int aux2[10] = {1,1,1,1,1,1,1,1,1,1};//se usa para verificar que planillas ya fueron asignadas
-int numClientes = 0;
-int i,j,k;
-int cartaActual;
+	cont=gtk_fixed_new();// creamos un contenedor
+	//fondo=gtk_image_new_from_file("images/conexion.jpg");//se llama la imagen de fondo	
+	puerto=gtk_entry_new();	
+	inicio = gtk_button_new_with_label("Conectar");// creamos un boton llamado inicio.
+	
+	gtk_widget_set_size_request(puerto, 5,30);
+	gtk_widget_set_size_request(inicio,150,50);
 
-void llenarCartas();
-void imprimirCartas(int array[]);
-void barajearCartas();
-void imprimirPlanilla(int array[4][4]);
-void obtenerPlanilla(int array[][4], int *id);
-void copiarMatriz(int mat1[4][4],int mat2[4][4]);
-void printInfoPlayer(jugador j);
+	//gtk_fixed_put(GTK_FIXED(cont),fondo,0,0);//se coloca un objeto en la ventana
 
-int main()
-{
-	struct sockaddr_in lsock,fsock;
-	int s, ss[NUMPLAYERS];
-	int len;
-	jugador jugadores[NUMPLAYERS];	
-	char msj[30];
+	gtk_fixed_put (GTK_FIXED (cont),puerto,141,50);
+	gtk_fixed_put (GTK_FIXED(cont),inicio,100,140);
+	
+	g_signal_connect_swapped (G_OBJECT (inicio), "clicked",G_CALLBACK (VistaSever),(gpointer) window);
+	g_signal_connect_swapped (G_OBJECT (inicio), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window);
+	gtk_container_add (GTK_CONTAINER(window),cont);// cerramos el contenedor
+	gtk_widget_show_all(window);// terminamo de usar la ventana		
+}
+
+void VistaSever(){
+	window1 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (window1), "Loteria");
+	gtk_widget_set_size_request(window1,1300,680);//tamaño de la ventana creada
+	gtk_window_set_resizable(GTK_WINDOW(window1),FALSE);// esta linea deja estatica la ventana
+	gtk_window_set_position(GTK_WINDOW(window1), GTK_WIN_POS_CENTER);
+
+	cont1=gtk_fixed_new();// creamos un contenedor
+	//fondo=gtk_image_new_from_file("images/conexion.jpg");//se llama la imagen de fondo	
+
+	gtk_fixed_put(GTK_FIXED(cont1),fondo,0,0);//se coloca un objeto en la ventana
+	
+	gtk_container_add (GTK_CONTAINER(window1),cont1);// cerramos el contenedor
+	gtk_widget_show_all(window1);// terminamo de usar la ventana
+}
+
+int abrirServidor(){	
 	//Creación de socket
 	if((s=socket(AF_INET,SOCK_STREAM,0)) < 0) {
 		perror("SOCKET: ");
@@ -73,14 +66,17 @@ int main()
 	//Asignación de dirección local 
 	if(bind(s,(struct sockaddr *)&lsock, sizeof(struct sockaddr_in)) < 0 ){
 		perror("BIND: ");
-		exit(1);
+		return 1;
 	}
 	//La llamada al sistema listen()  
 	if(listen(s,3)<0){
 		perror("LISTEN: ");
-		exit(1);
+		return 1;
 	}
-	
+	return 0;
+}
+
+void esperaClientes(){
 	while(1){ 
 		len = sizeof(struct sockaddr_in); /* &len: entra y sale el tamano del socket esperado */
 		//La llamada al sistema accept() 
@@ -174,8 +170,6 @@ int main()
 			}	
 		}
 	} /*while*/
-	
-	return 0;
 }
 
 void llenarCartas(){
@@ -280,4 +274,5 @@ void printInfoPlayer(jugador j){
 	printf("Planilla de jugador\n");
 	imprimirPlanilla(j.tablero);
 }
+
 
