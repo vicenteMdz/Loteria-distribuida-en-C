@@ -230,9 +230,9 @@ gboolean loteria(gpointer data){
 					gtk_widget_show_all(window1);// terminamo de usar la ventana
 				}
 			//aquí enviar el estado del cliente
-			if( send(s,&cliente,sizeof(cliente),0) < sizeof(cliente) ){
+			/*if( send(s,&cliente,sizeof(cliente),0) < sizeof(cliente) ){
 				perror("SEND: ");
-			}
+			}*/
 		}
 	}
 	return FALSE;
