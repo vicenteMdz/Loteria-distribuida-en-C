@@ -199,7 +199,8 @@ gboolean loteria(gpointer data){
 	carta=gtk_image_new_from_file("images/fichas/1.png");//se llama la imagen de fondo
 	char cartaImg[50];
 	cartaActual = -1;	
-	int aux = 1;				
+	int aux = 1;
+	pid_t x;				
 	while(1){
 		//El cliente recibe la carta que se está jugando en el momento
 		if( (len=recv(s,&cartaActual,sizeof(cartaActual),MSG_DONTWAIT))<= 0 ){
@@ -228,6 +229,17 @@ gboolean loteria(gpointer data){
 					carta=gtk_image_new_from_file(cartaImg);//se llama la imagen de fondo
 					gtk_fixed_put(GTK_FIXED(cont2),carta,850,180);//se coloca un objeto en la ventana
 					gtk_widget_show_all(window1);// terminamo de usar la ventana
+					x = fork();  
+							 
+					if (x < 0) {  // just in case fork fails 
+							puts("fork failure");
+							exit(-1);
+					}   
+					
+					else if (x == 0) { // therefore this block will be the child process 
+							//execlp("mpg123", "mpg123", "-q", "audios/1.mp3", NULL); 
+							system("aplay audios/1.wav");
+					}
 				}
 			//aquí enviar el estado del cliente
 			/*if( send(s,&cliente,sizeof(cliente),0) < sizeof(cliente) ){
@@ -236,6 +248,11 @@ gboolean loteria(gpointer data){
 		}
 	}
 	return FALSE;
+}
+
+void *reproducirSonido() 
+{ 
+    system("aplay audios/1.wav");
 }
 
 void fila1(int col){

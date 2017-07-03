@@ -87,4 +87,5 @@ void fila4(int col);
 int verificaJuego();
 void ganador();
 void nuevaPartida(GtkWidget *widget, gpointer window);
+void *reproducirSonido() ;
 
