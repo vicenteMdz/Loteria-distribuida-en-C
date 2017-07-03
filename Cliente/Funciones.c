@@ -219,8 +219,15 @@ gboolean loteria(gpointer data){
 				break;
 			}else if(cartaActual<0){//el juego termino, hay un ganador
 					fin_juego = 1;
-					fprintf(stderr,"La Partida a finalizado, hay un ganador");
+					fprintf(stderr,"La Partida a finalizado, hay un ganador\n");
 					sprintf(imagen_error,"images/msj/gano.jpg");
+					char nombreGanador[100];
+					len=recv(s,nombreGanador,30,0);
+					if( len<= 0 ){
+					}else{
+						nombreGanador[len]='\n';						
+						fprintf(stderr,"Nombre del ganador --> %s",nombreGanador);
+					}
 					FinJuego(imagen_error);
 					break;		
 				}else{				
@@ -229,7 +236,7 @@ gboolean loteria(gpointer data){
 					carta=gtk_image_new_from_file(cartaImg);//se llama la imagen de fondo
 					gtk_fixed_put(GTK_FIXED(cont2),carta,850,180);//se coloca un objeto en la ventana
 					gtk_widget_show_all(window1);// terminamo de usar la ventana
-					x = fork();  
+					/*x = fork();  
 							 
 					if (x < 0) {  // just in case fork fails 
 							puts("fork failure");
@@ -239,7 +246,7 @@ gboolean loteria(gpointer data){
 					else if (x == 0) { // therefore this block will be the child process 
 							//execlp("mpg123", "mpg123", "-q", "audios/1.mp3", NULL); 
 							system("aplay audios/1.wav");
-					}
+					}*/
 				}
 			//aquí enviar el estado del cliente
 			/*if( send(s,&cliente,sizeof(cliente),0) < sizeof(cliente) ){
@@ -262,7 +269,7 @@ void fila1(int col){
 		cliente.tablero_jugado[0][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
-			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
+			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,865,530);
 		}
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}else{
@@ -277,7 +284,7 @@ void fila2(int col){
 		cliente.tablero_jugado[1][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
-			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
+			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,865,530);
 		}
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}else{
@@ -292,7 +299,7 @@ void fila3(int col){
 		cliente.tablero_jugado[2][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
-			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
+			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,865,530);
 		}
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}else{
@@ -307,7 +314,7 @@ void fila4(int col){
 		cliente.tablero_jugado[3][col] = 1;
 		if(verificaJuego() == 0 ){
 			GtkWidget *gif_avisa=gtk_image_new_from_file("images/clic.gif");//se llama la imagen de fondo
-			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,1050,440);
+			gtk_fixed_put (GTK_FIXED(cont2),gif_avisa,865,530);
 		}
 		gtk_widget_show_all(window1);// terminamo de usar la ventana
 	}else{

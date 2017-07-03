@@ -208,6 +208,7 @@ void Error (char const *imagen)
 
 void FinJuego(char const *imagen)
 {	
+	gtk_widget_destroy(window1);
 	window4 = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (window4), "Error");
 	gtk_widget_set_size_request(window4,550,215);//tamaño de la ventana creada
@@ -220,9 +221,10 @@ void FinJuego(char const *imagen)
 	gtk_fixed_put (GTK_FIXED(cont5),Aceptar,385,148);	
 	gtk_fixed_put(GTK_FIXED(cont5),fondo,0,0);//se coloca un objeto en la ventana	
 	//if(fin_juego == 1){
-	g_signal_connect(G_OBJECT(Aceptar), "clicked",G_CALLBACK(nuevaPartida), (gpointer) window4); 
+	//g_signal_connect(G_OBJECT(Aceptar), "clicked",G_CALLBACK(nuevaPartida), (gpointer) window4); 
 	//}else{
 		g_signal_connect_swapped (G_OBJECT (Aceptar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window4);
+		//g_signal_connect_swapped (G_OBJECT (Aceptar), "clicked",G_CALLBACK (gtk_widget_destroy),(gpointer) window1);
 	//}
 	gtk_container_add (GTK_CONTAINER(window4),cont5);// cerramos el contenedor
 	gtk_widget_show_all(window4);// terminamo de usar la ventana

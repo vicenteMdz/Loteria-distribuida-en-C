@@ -202,8 +202,6 @@ void playing(){
 						gtk_fixed_put(GTK_FIXED(cont1),planillaJugadorImg,230,430);//se coloca un objeto en la ventana
 					}
 					
-					
-					//while(gtk_events_pending()) gtk_main_iteration();
 				}
 				gtk_widget_show_all(window1);// terminamo de usar la ventana
 				int r[2];
@@ -230,12 +228,13 @@ void playing(){
 							//printf("Ya hay un ganador");
 							if(r[0]<0){//ya hay un ganador, avisar a los demas
 								printf("Ya hay un ganador %d \n",r[0]);
+								
 								band = 1;
 							}
 						}
 					}
 					//printf("Enviado Carta No: %d\n",cartaActual);
-					sleep(2);
+					sleep(5);
 					//el servidor recoge los datos del juego de los jugadores
 					/*for(m = 0;m<NUMPLAYERS;m++){
 						//el servidor recibe los datos del jugador recien conectado
@@ -250,22 +249,34 @@ void playing(){
 					printf("fin del juego, no hay ganador\n");
 					cartaActual=55;
 					for(k=0;k<NUMPLAYERS;k++){
-						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
-							perror("SEND: ");
+						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len); // responde al cliente 
+							//perror("SEND: ");
 					}
 					numClientes = 0;//se reinicia el contador para una nueva partida
 					for(int k=0;k<NUMPLAYERS;k++)
 						close(ss[k]);
+					//gtk_widget_destroy(window1);
+					//muestraPartida();
+					exit(1);
 				}else{
 					cartaActual = r[0];
 					printf("Mensaje el juego a terminado %d\n", cartaActual);
 					for(k=0;k<NUMPLAYERS;k++){
-						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len) // responde al cliente 
-							perror("SEND: ");
-					}	
+						if(send(ss[jugadores[k].id_Jugador],&cartaActual,sizeof(cartaActual),0) < len); // responde al cliente 
+							//perror("SEND: ");
+					}					
+					char nombreGanador[100];
+								strcpy(nombreGanador,jugadores[r[1]].nombreJugador);
+								fprintf(stderr,"Nombre del ganador --> %s",nombreGanador);
+								nombreGanador[29] = '\n';
+								for(k=0;k<NUMPLAYERS;k++){
+									if(send(ss[jugadores[k].id_Jugador],nombreGanador,30,0) < len); // responde al cliente 
+										//perror("SEND: ");
+								}
 					numClientes = 0;//se reinicia el contador para una nueva partida
 					for(int k=0;k<NUMPLAYERS;k++)
-						close(ss[k]);				
+						close(ss[k]);
+					exit(1);				
 				}
 }
 
@@ -362,7 +373,7 @@ void esperaClientes(){
 						}
 					}
 					//printf("Enviado Carta No: %d\n",cartaActual);
-					sleep(2);
+					sleep(1);
 				}
 				printf("Valor de la bandera --> %d\n",band);
 				if(band == 0){//se recorrió todas las fichas y no hay ganador, se avisa a todos los clientes

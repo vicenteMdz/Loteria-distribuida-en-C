@@ -10,7 +10,7 @@
 #include <time.h>
 #include <pthread.h>
 #define MAX_LINE 120
-#define NUMPLAYERS 2
+#define NUMPLAYERS 5
 #define _GNU_SOURCE  
 
 typedef struct
